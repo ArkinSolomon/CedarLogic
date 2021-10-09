@@ -10,3 +10,4 @@ Steps taken to attempt compilation on MacOSX12
 8. Update path retrival for Mac
 9. Include OpenGL/gl.h instead of GL/gl.h for Mac
 10. Include vector in files where you get an implicit declaration error
+11. Delete/remove SwapBuffers()

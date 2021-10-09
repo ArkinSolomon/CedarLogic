@@ -29,8 +29,8 @@ END_EVENT_TABLE()
 
 OscopeCanvas::OscopeCanvas(wxWindow *parent, GUICircuit* gCircuit, wxWindowID id,
     const wxPoint& pos, const wxSize& size, long style, const wxString& name)
-	: wxGLCanvas( parent, id, pos, size, style|wxFULL_REPAINT_ON_RESIZE|wxSUNKEN_BORDER ) {
-
+	: wxGLCanvas(parent, id, NULL, pos, size, style|wxFULL_REPAINT_ON_RESIZE|wxWANTS_CHARS, name)//wxGLCanvas( parent, id, pos, size, style|wxFULL_REPAINT_ON_RESIZE|wxSUNKEN_BORDER ) {
+{
 	this->gCircuit = gCircuit;
 	m_init = false;
 	parentFrame = (OscopeFrame*) parent;
@@ -215,16 +215,16 @@ void OscopeCanvas::OnPaint(wxPaintEvent& event){
 void OscopeCanvas::OnSize(wxSizeEvent& event)
 {
     // this is also necessary to update the context on some platforms
-    wxGLCanvas::OnSize(event);
+    wxGLCanvas::HandleWindowEvent(event);
 
     // set GL viewport (not called by wxGLCanvas::OnSize on all platforms...)
-#ifndef __WXMOTIF__
-    if (GetContext())
-#endif
-    {
-        Refresh();
-        //Render();
-    }
+// #ifndef __WXMOTIF__
+//     if (GetContext())
+// #endif
+//     {
+//         Refresh();
+//         //Render();
+//     }
 }
 
 

@@ -23,7 +23,7 @@
 #include "threadLogic.h"
 #include "GUICanvas.h"
 #include "GUICircuit.h"
-//#include "OscopeFrame.h"
+// #include "OscopeFrame.h"
 class OscopeFrame;
 #include "klsMiniMap.h"
 #include "autoSaveThread.h"
