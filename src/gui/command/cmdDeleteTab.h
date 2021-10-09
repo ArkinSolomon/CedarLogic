@@ -3,6 +3,8 @@
 #include "klsCommand.h"
 #include <stack>
 
+#include <vector>
+
 class wxAuiNotebook;
 
 //JV - cmdDeleteTab - delete a tab from canvasBook

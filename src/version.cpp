@@ -4,9 +4,9 @@
 using namespace std;
 
 namespace {
-	const int VERSION_MAJOR = CEDARLOGIC_MAJOR;
-	const int VERSION_MINOR = CEDARLOGIC_MINOR;
-	const int VERSION_PATCH = CEDARLOGIC_PATCH;
+	const int VERSION_MAJOR = 4;
+	const int VERSION_MINOR = 0;
+	const int VERSION_PATCH = 0;
 }
 
 string VERSION_NUMBER_STRING() {

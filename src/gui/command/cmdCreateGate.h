@@ -2,6 +2,8 @@
 #pragma once
 #include "klsCommand.h"
 
+#include <vector>
+
 // cmdCreateGate - creates a gate on a given canvas at position (x,y)
 class cmdCreateGate : public klsCommand {
 public:

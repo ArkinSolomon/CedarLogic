@@ -1,0 +1,12 @@
+Steps taken to attempt compilation on MacOSX12
+
+1. Use modified Makefile from WxWidgets Bomb demo
+2. Replace values in version.cpp manually
+3. Delete/comment all windows only functions in the vicinity of all ZeroMemory calls
+4. Replace all SetCurrent() calls with an argument of this `this`
+5. Remove all GetContext() calls and their surrounding pre-processors
+6. Change wxGLCanvas::OnSize() to wxGLCanvas::HandleWindowEvent()
+7. Update klsGLCanvas wxGLCanvas constructor call (old one is in a comment next to it)
+8. Update path retrival for Mac
+9. Include OpenGL/gl.h instead of GL/gl.h for Mac
+10. Include vector in files where you get an implicit declaration error

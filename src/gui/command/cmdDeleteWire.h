@@ -3,6 +3,8 @@
 #include "klsCommand.h"
 #include <stack>
 
+#include <vector>
+
 // cmdDeleteWire - Deletes a wire
 class cmdDeleteWire : public klsCommand {
 public:
