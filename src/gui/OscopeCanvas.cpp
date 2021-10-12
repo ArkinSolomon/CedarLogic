@@ -215,16 +215,16 @@ void OscopeCanvas::OnPaint(wxPaintEvent& event){
 void OscopeCanvas::OnSize(wxSizeEvent& event)
 {
     // this is also necessary to update the context on some platforms
-    wxGLCanvas::HandleWindowEvent(event);
+    // wxGLCanvas::HandleWindowEvent(event);
 
     // set GL viewport (not called by wxGLCanvas::OnSize on all platforms...)
 // #ifndef __WXMOTIF__
 //     if (GetContext())
 // #endif
 //     {
-//         Refresh();
-//         //Render();
-//     }
+        Refresh();
+        //Render();
+    // }
 }
 
 

@@ -13,7 +13,7 @@
 # under Linux.
 #
 
-CXX = $(shell wx-config --cxx) -v -isysroot /Applications/Xcode-beta.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
+CXX = $(shell wx-config --cxx) -Wno-everything -v -isysroot /Applications/Xcode-beta.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
 
 PROGRAM = CedarLogic
 

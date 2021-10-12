@@ -30,6 +30,8 @@ GUICanvas::GUICanvas(wxWindow *parent, GUICircuit* gCircuit, wxWindowID id,
     const wxPoint& pos, const wxSize& size, long style, const wxString& name)
     : klsGLCanvas(parent, name, id, pos, size, style|wxSUNKEN_BORDER ) {
 
+  cout << "Entered GUICanvas constructor" << endl;
+
 	this->gCircuit = gCircuit;
 	isWithinPaste = false;
 	currentDragState = DRAG_NONE;
@@ -37,9 +39,11 @@ GUICanvas::GUICanvas(wxWindow *parent, GUICircuit* gCircuit, wxWindowID id,
 	hotspotHighlight = "";
 	
 	drawWireHover = false;
-	
+  
+  cout << "Setting grid";
 	setHorizGrid(0.5);
 	setVertGrid(0.5);
+  cout << "Set grid";
 	
 	// Add mouse object to collision checker
 	mouse = new klsCollisionObject( COLL_MOUSEBOX );

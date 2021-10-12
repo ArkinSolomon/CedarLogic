@@ -40,11 +40,17 @@ bool MainApp::OnInit()
 #ifndef _PRODUCTION_
   logfile.open("guilog.log");
 #endif
+  cout << "Will load settings" << endl;
   loadSettings();
+  cout << "Settings loaded" << endl;
 
+  cout << "Will add file handler" << endl;
   wxFileSystem::AddHandler(new wxZipFSHandler);
+  cout << "Added file handler" << endl;
+  cout << "Creating new wxHelpController" << endl;
   helpController = new wxHelpController;
   helpController->Initialize(appSettings.helpFile);
+  cout << "Created and initialized new wxHelpController" << endl;
 
   //*****************************************
   //Edit by Joshua Lansford 2/15/07
@@ -69,13 +75,15 @@ bool MainApp::OnInit()
   {
     // inserted the cast  KAS
     cmdFilename = (const char *)argv[1];
-    //		logfile << "cmdFilename = " << cmdFilename << endl;
+    // logfile << "cmdFilename = " << cmdFilename << endl;
   }
   //End of edit
   //**********************************
 
   // create the main application window
+  cout << "Creating main application window" << endl;
   MainFrame *frame = new MainFrame(VERSION_TITLE(), cmdFilename.c_str());
+  cout << "Created main application window" << endl;
   // and show it (the frames, unlike simple controls, are not shown when
   // created initially)
   frame->Show(true);
@@ -94,6 +102,8 @@ bool MainApp::OnInit()
   // loop and the application will run. If we returned false here, the
   // application would exit immediately
 
+  cout << "Main app initialized" << endl;
+
   return true;
 }
 
@@ -102,16 +112,22 @@ void MainApp::loadSettings()
 
   // Get app full path.
 #ifdef WIN32
+  cout << "Will find path as a win32 machine" << endl;
   HMODULE hModule = GetModuleHandle(NULL);
   CHAR path[MAX_PATH];
   GetModuleFileName(hModule, path, MAX_PATH);
   pathToExe = path;
 #else
+  cout << "Will find path as non-win32 machine" << endl;
+  cout << "PATH_MAX=" << PATH_MAX << endl;
   char buf[PATH_MAX];
+  cout << "Declared buff with size of PATH_MAX" << endl;
   uint32_t bufsize = PATH_MAX;
   if (!_NSGetExecutablePath(buf, &bufsize))
     puts(buf);
   pathToExe = string(buf);
+  cout << "This executable path=" << pathToExe << endl;
+  cout << flush;
 #endif
 
   // Find path to exe so that files can be loaded relative to it
@@ -128,16 +144,24 @@ void MainApp::loadSettings()
     }
   }
 
+  cout << "Executable parent directory=" << pathToExe << endl;
+
   if (pathToExe.find("Debug") != string::npos || pathToExe.find("Release") != string::npos)
   {
     pathToExe = "";
   }
 
+  cout << "Current value of pathToExe=" << pathToExe << endl; 
+
   string settingsIni = pathToExe + "res/settings.ini";
   ifstream iniFile(settingsIni.c_str(), ios::in);
 
-  if (!iniFile)
+  cout << "Settings file location=" << settingsIni << endl;
+
+  if (true)
   {
+    cout << "Set app settings" << endl;
+
     // set defaults
     appSettings.gateLibFile = pathToExe + "res/cl_gatedefs.xml";
     appSettings.helpFile = pathToExe + "res/KLS_Logic.chm";
@@ -149,6 +173,8 @@ void MainApp::loadSettings()
     appSettings.wireConnRadius = 0.18f;
     appSettings.wireConnVisible = true;
     appSettings.gridlineVisible = true;
+
+    cout << "Done setting app settings" << endl;
   }
   else
   {
@@ -231,7 +257,9 @@ void MainApp::loadSettings()
     issGridVisible >> appSettings.gridlineVisible;
 
     // all done
+    cout << "Will close settings file" << endl;
     iniFile.close();
+    cout << "Closed settings file" << endl;
 
     // check screen coords
     wxScreenDC sdc;

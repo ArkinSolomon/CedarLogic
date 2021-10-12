@@ -69,8 +69,10 @@ public:
         const wxSize& size = wxDefaultSize,
         long style = 0 );
 
-    virtual ~klsGLCanvas();
+      //The context of the canvas, used to be created implicitly in wx < 2.9
+      wxGLContext context; 
 
+    virtual ~klsGLCanvas();
 
 	// Print the canvas contents to a bitmap:
 	wxImage renderToImage( unsigned long width, unsigned long height, unsigned long colorDepth = 32, bool noColor = false );
