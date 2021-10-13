@@ -110,7 +110,7 @@ void gateImage::setViewport() {
 
 	// gluOrtho2D(left, right, bottom, top); (In world-space coords.)
 	gluOrtho2D(orthoBoxTL.x, orthoBoxBR.x, orthoBoxBR.y, orthoBoxTL.y);
-	glViewport(0, 0, (GLint) sz.GetWidth(), (GLint) sz.GetHeight());
+	glViewport(0, 0, (GLint) sz.GetWidth() * GetContentScaleFactor(), (GLint) sz.GetHeight() * GetContentScaleFactor());
 
 	// Store minCorner and maxCorner for use in mouse handler:
 	minCorner = orthoBoxTL;

@@ -707,12 +707,12 @@ void GUICanvas::OnMouseMove( GLdouble glX, GLdouble glY, bool ShiftDown, bool Ct
 	//	REFRESH DOESN'T SEEM TO UPDATE IN TIME FOR MOUSE MOVE
 	if (shouldRender) {
     
-    cout << "Rendering" << endl;
+    // cout << "Rendering" << endl;
 		klsGLCanvasRender();
 		// Show the new buffer:
 		glFlush();
 		SwapBuffers();
-    cout << "Done rendering" << endl;
+    // cout << "Done rendering" << endl;
 	}
 	
 	// clean up the selected gates vector

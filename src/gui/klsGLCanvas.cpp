@@ -216,7 +216,6 @@ void klsGLCanvas::reclaimViewport(void)
   wxSize sz = GetClientSize();
   // gluOrtho2D(left, right, bottom, top); (In world-space coords.)
   gluOrtho2D(panX, panX + (sz.GetWidth() * viewZoom), panY - (sz.GetHeight() * viewZoom), panY);
-  cout << "Width: " << sz.GetWidth() << endl;
   glViewport(0, 0, (GLint)sz.GetWidth() * GetContentScaleFactor(), (GLint)sz.GetHeight() * GetContentScaleFactor());
 
   // Set the model matrix:
@@ -281,7 +280,7 @@ void klsGLCanvas::getViewport(GLPoint2f &p1, GLPoint2f &p2)
 
 void klsGLCanvas::klsGLCanvasRender(bool noColor)
 {
-  cout << "Render klsGLCanvas" << endl;
+  // cout << "Render klsGLCanvas" << endl;
 
   int w, h;
   GetClientSize(&w, &h);
@@ -310,7 +309,7 @@ void klsGLCanvas::klsGLCanvasRender(bool noColor)
 
     if (horizOn)
     {
-      cout << "Drawing horizontal grid" << endl;
+      // cout << "Drawing horizontal grid" << endl;
 
       long gridSpacing = max((long)(horizSpacing + 0.5), (long)1); // Limit the grid spacing options to integer values!
       long glSpacing = max((long)gridSpacing, (long)(MIN_GRID_SCREEN_SPACING * viewZoom));
@@ -329,7 +328,7 @@ void klsGLCanvas::klsGLCanvasRender(bool noColor)
 
     if (vertOn)
     {
-      cout << "Drawing vertical grid" << endl;
+      // cout << "Drawing vertical grid" << endl;
 
       long gridSpacing = max((long)(vertSpacing + 0.5), (long)1); // Limit the grid spacing options to integer values!
       long glSpacing = max((long)gridSpacing, (long)(MIN_GRID_SCREEN_SPACING * viewZoom));
@@ -411,12 +410,12 @@ void klsGLCanvas::klsGLCanvasRender(bool noColor)
   glLoadIdentity();
   OnRender(noColor);
 
-  cout << "Done rendering" << endl;
+  // cout << "Done rendering" << endl;
 }
 
 void klsGLCanvas::wxOnPaint(wxPaintEvent &event)
 {
-  cout << "Starting klsGLCanvas (wxOnPaint)" << endl;
+  // cout << "Starting klsGLCanvas (wxOnPaint)" << endl;
   
   wxPaintDC dc(this);
   // #ifndef __WXMOTIF__
@@ -462,7 +461,7 @@ void klsGLCanvas::wxOnPaint(wxPaintEvent &event)
   glFlush();
   SwapBuffers();
 
-  cout << "Ended klsGLCanvas (wxOnPaint)" << endl;
+  // cout << "Ended klsGLCanvas (wxOnPaint)" << endl;
 }
 
 void klsGLCanvas::wxOnEraseBackground(wxEraseEvent &WXUNUSED(event))

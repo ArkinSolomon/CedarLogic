@@ -54,6 +54,7 @@ void LibraryParse::parseFile() {
 		if (mParse->readTag() != "library") return;
 		mParse->readTag();
 		libName = mParse->readTagValue("name");
+    cout << "Parsing library " << libName << endl;
 		mParse->readCloseTag();
 		
 		string hsName, hsType;

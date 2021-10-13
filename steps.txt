@@ -12,3 +12,5 @@ Steps taken to attempt compilation on MacOSX12
 10. Include vector in files where you get an implicit declaration error
 11. Delete/remove SwapBuffers()
 12. Explicitly create canvas context
+13. Multiply client size by content scale (GetContentScaleFactor()) to work on HiDPI displays
+15. Change method of creating a wxString for a library

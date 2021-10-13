@@ -60,7 +60,7 @@ void OscopeCanvas::OnRender(){
 	
 	
 	gluOrtho2D(0, OSCOPE_HORIZONTAL, numberOfWires * 1.5, -0.25);
-	glViewport(0, 0, (GLint) sz.GetWidth(), (GLint) sz.GetHeight());
+	glViewport(0, 0, (GLint) sz.GetWidth() * GetContentScaleFactor(), (GLint) sz.GetHeight() * GetContentScaleFactor());
 
 	// Set the model matrix:
 	glMatrixMode (GL_MODELVIEW);
