@@ -40,19 +40,23 @@ GUICanvas::GUICanvas(wxWindow *parent, GUICircuit* gCircuit, wxWindowID id,
 	
 	drawWireHover = false;
   
-  cout << "Setting grid";
+  cout << "Setting grid" << endl;
 	setHorizGrid(0.5);
 	setVertGrid(0.5);
-  cout << "Set grid";
+  cout << "Set grid" << endl;
 	
 	// Add mouse object to collision checker
+  cout << "Adding mouse to collision checking" << endl;
 	mouse = new klsCollisionObject( COLL_MOUSEBOX );
 	snapMouse = new klsCollisionObject( COLL_MOUSEBOX );
 	collisionChecker.addObject( mouse );
+  cout << "Added mouse to collision checking" << endl;
 	
 	// Add drag selection box to collision checker
+  cout << "Adding drag selection to collision checker" << endl;
 	dragselectbox = new klsCollisionObject( COLL_SELBOX );
 	collisionChecker.addObject( dragselectbox );
+  cout << "Added drag selection to collision checker" << endl;
 }
 
 GUICanvas::~GUICanvas() {
@@ -702,10 +706,13 @@ void GUICanvas::OnMouseMove( GLdouble glX, GLdouble glY, bool ShiftDown, bool Ct
 	// Only render if necessary
 	//	REFRESH DOESN'T SEEM TO UPDATE IN TIME FOR MOUSE MOVE
 	if (shouldRender) {
+    
+    cout << "Rendering" << endl;
 		klsGLCanvasRender();
 		// Show the new buffer:
 		glFlush();
 		SwapBuffers();
+    cout << "Done rendering" << endl;
 	}
 	
 	// clean up the selected gates vector

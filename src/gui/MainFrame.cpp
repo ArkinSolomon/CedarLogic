@@ -709,23 +709,37 @@ void MainFrame::OnViewWireConn(wxCommandEvent &event)
 
 void MainFrame::OnTimer(wxTimerEvent &event)
 {
+  cout << "Main frame timer" << endl;
   ostringstream oss;
   if (!(currentCanvas->getCircuit()->getSimulate()))
   {
+    cout << "Not simulating" << endl;
     return;
   }
-  if (wxGetApp().appSystemTime.Time() < wxGetApp().appSettings.refreshRate)
+  if (wxGetApp().appSystemTime.Time() < wxGetApp().appSettings.refreshRate){
+    cout << "Skip frame" << endl;
     return;
+  }
+  cout << "Will pause" << endl;
   wxGetApp().appSystemTime.Pause();
-  if (gCircuit->panic)
+  cout << "Done pausing" << endl;
+  if (gCircuit->panic){
+    cout << "Circuit panic" << endl;
     return;
-    
+  }
+
   // Do function of number of milliseconds that passed since last step
+  cout << "Will execute" << endl;
   gCircuit->lastTime = wxGetApp().appSystemTime.Time();
   gCircuit->lastTimeMod = wxGetApp().timeStepMod;
   gCircuit->lastNumSteps = wxGetApp().appSystemTime.Time() / wxGetApp().timeStepMod;
+  cout << "Will send core message" << endl;
   gCircuit->sendMessageToCore(klsMessage::Message(klsMessage::MT_STEPSIM, new klsMessage::Message_STEPSIM(wxGetApp().appSystemTime.Time() / wxGetApp().timeStepMod)));
+  cout << "Setting simulate to false" << endl;
   currentCanvas->getCircuit()->setSimulate(false);
+  cout << "Set simulate to false" << endl;
+
+  cout << "Will execute time stepping" << endl;
   wxGetApp().appSystemTime.Start(wxGetApp().appSystemTime.Time() % wxGetApp().timeStepMod);
 }
 

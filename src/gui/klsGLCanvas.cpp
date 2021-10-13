@@ -19,7 +19,7 @@ using namespace std;
 
 // Activate this #define statement if you want to
 // show the mouse handling arrows:
-// #define CANVAS_DEBUG_TESTS_ON
+#define CANVAS_DEBUG_TESTS_ON
 
 DECLARE_APP(MainApp)
 
@@ -40,9 +40,13 @@ END_EVENT_TABLE()
 klsGLCanvas::klsGLCanvas(wxWindow *parent, const wxString &name, wxWindowID id,
                          const wxPoint &pos, const wxSize &size, long style) : wxGLCanvas(parent, id, NULL, pos, size, style | wxFULL_REPAINT_ON_RESIZE | wxWANTS_CHARS, name), context(this)//wxGLCanvas(parent, (wxGLCanvas*) NULL, id, pos, size, style|wxFULL_REPAINT_ON_RESIZE|wxWANTS_CHARS, name ) {
 {
+  cout << "Entered klsGLCanvas constructor" << endl;
+
   // Zoom and OpenGL coordinate of upper-left corner of this canvas:
   viewZoom = DEFAULT_ZOOM;
   panX = panY = 0.0;
+
+  cout << "Enabling autoscroll" << endl;
 
   autoScrollEnable();
 
@@ -53,8 +57,13 @@ klsGLCanvas::klsGLCanvas(wxWindow *parent, const wxString &name, wxWindowID id,
   wheelRotation = 0.0;
 
   // Set the mouse coords memory:
+
+  cout << "Setting mouse coords memory" << endl;
+
   setMouseCoords(GLPoint2f(0.0, 0.0));
   setMouseScreenCoords(wxPoint(0, 0));
+
+  cout << "Setting button dragging" << endl;
 
   setIsDragging(false, BUTTON_LEFT);
   setDragStartCoords(GLPoint2f(0.0, 0.0), BUTTON_LEFT);
@@ -69,8 +78,10 @@ klsGLCanvas::klsGLCanvas(wxWindow *parent, const wxString &name, wxWindowID id,
   setDragEndCoords(GLPoint2f(0.0, 0.0), BUTTON_RIGHT);
 
   // Set up scrolling timer:
+  cout << "Setting up scrolling timer" << endl;
   scrollTimer = new wxTimer(this, SCROLL_TIMER_ID);
   scrollTimer->Stop();
+  cout << "Set up scrolling timer" << endl;
 
   setHorizGrid(1);
   setHorizGridColor(0, 0, (GLfloat)GRID_INTENSITY, (GLfloat)GRID_INTENSITY);
@@ -87,6 +98,7 @@ klsGLCanvas::klsGLCanvas(wxWindow *parent, const wxString &name, wxWindowID id,
   canvasLocked = false;
 
   // context = wxGLContext(this);
+  cout << "Exiting klsGLCanvas constructor" << endl;
 }
 
 klsGLCanvas::~klsGLCanvas()
@@ -148,6 +160,7 @@ wxImage klsGLCanvas::renderToImage(unsigned long width, unsigned long height, un
   // Setup the viewport for rendering:
   reclaimViewport();
   // Reset the glViewport to the size of the bitmap:
+  
   glViewport(0, 0, (GLint)width, (GLint)height);
 
   // Set the bitmap clear color:
@@ -203,7 +216,8 @@ void klsGLCanvas::reclaimViewport(void)
   wxSize sz = GetClientSize();
   // gluOrtho2D(left, right, bottom, top); (In world-space coords.)
   gluOrtho2D(panX, panX + (sz.GetWidth() * viewZoom), panY - (sz.GetHeight() * viewZoom), panY);
-  glViewport(0, 0, (GLint)sz.GetWidth(), (GLint)sz.GetHeight());
+  cout << "Width: " << sz.GetWidth() << endl;
+  glViewport(0, 0, (GLint)sz.GetWidth() * GetContentScaleFactor(), (GLint)sz.GetHeight() * GetContentScaleFactor());
 
   // Set the model matrix:
   glMatrixMode(GL_MODELVIEW);
@@ -396,10 +410,14 @@ void klsGLCanvas::klsGLCanvasRender(bool noColor)
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
   OnRender(noColor);
+
+  cout << "Done rendering" << endl;
 }
 
 void klsGLCanvas::wxOnPaint(wxPaintEvent &event)
 {
+  cout << "Starting klsGLCanvas (wxOnPaint)" << endl;
+  
   wxPaintDC dc(this);
   // #ifndef __WXMOTIF__
   // 	if (!GetContext()) return;
@@ -443,6 +461,8 @@ void klsGLCanvas::wxOnPaint(wxPaintEvent &event)
   // Show the new buffer:
   glFlush();
   SwapBuffers();
+
+  cout << "Ended klsGLCanvas (wxOnPaint)" << endl;
 }
 
 void klsGLCanvas::wxOnEraseBackground(wxEraseEvent &WXUNUSED(event))

@@ -11,5 +11,4 @@ Steps taken to attempt compilation on MacOSX12
 9. Include OpenGL/gl.h instead of GL/gl.h for Mac
 10. Include vector in files where you get an implicit declaration error
 11. Delete/remove SwapBuffers()
-12. Touched /var/db/DetachedSignatures
-13. Change colors of grids
+12. Explicitly create canvas context

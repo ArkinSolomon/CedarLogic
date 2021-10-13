@@ -18,11 +18,13 @@ DECLARE_APP(MainApp)
 IMPLEMENT_DYNAMIC_CLASS(GUICircuit, wxDocument)
 
 GUICircuit::GUICircuit() {
+  cout << "In GUICircuit constructor" << endl;
 	nextGateID = nextWireID = 0;
 	simulate = true;
 	waitToSendMessage = true;
 	panic = false;
 	pausing = false;
+  cout << "Returning from GUICircuit constructor" << endl;
 	return;
 }
 
