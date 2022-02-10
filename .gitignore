@@ -6,3 +6,4 @@ res/settings.ini
 res/KLS_Logic.chw
 *.o
 *.log
+**/.DS_Store

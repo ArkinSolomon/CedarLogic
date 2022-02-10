@@ -356,7 +356,7 @@ void klsGLCanvas::klsGLCanvasRender(bool noColor)
   glLoadIdentity();
 
   // Origin Marker:
-  glColor4f(0, 0, 0, 1);
+  glColor4f(1, 0, 1, 1);
   glBegin(GL_LINES);
   glVertex2f(-20, 20);
   glVertex2f(20, -20);

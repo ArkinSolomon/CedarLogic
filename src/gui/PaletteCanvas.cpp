@@ -28,6 +28,7 @@ PaletteCanvas::PaletteCanvas(wxWindow *parent, wxWindowID id, wxString &libName,
   SetBackgroundColour(*wxWHITE);
 
   libraryName = (string)((const char *)libName.c_str()); // KAS
+  cout << "Loading Library: " << libraryName << endl;
   gateSizer = NULL;
 
   init = false;
@@ -40,10 +41,11 @@ PaletteCanvas::~PaletteCanvas()
     delete gates[i];
 }
 
+//Puts them into the pallet
 void PaletteCanvas::OnPaint(wxPaintEvent &event)
 {
   wxPaintDC dc(this);
-  cout << "Loading Library: " << libraryName << endl;
+  cout << "Painting Library: " << libraryName << endl;
   if (!init)
   {
     map<string, LibraryGate>::iterator gateWalk = wxGetApp().libraries[libraryName].begin();
@@ -52,6 +54,8 @@ void PaletteCanvas::OnPaint(wxPaintEvent &event)
     gateSizer = new wxBoxSizer(wxVERTICAL);
     while (gateWalk != wxGetApp().libraries[libraryName].end())
     {
+
+      //Makes sure each row only has 3
       if (!(counter % 3))
       {
         lineSizer = new wxBoxSizer(wxHORIZONTAL);

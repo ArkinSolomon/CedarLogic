@@ -3,7 +3,7 @@ Steps taken to attempt compilation on MacOSX12
 1. Use modified Makefile from WxWidgets Bomb demo
 2. Replace values in version.cpp manually
 3. Delete/comment all windows only functions in the vicinity of all ZeroMemory calls
-4. Replace all SetCurrent() calls with an argument of this `this`
+4. Replace all SetCurrent() calls with an argument of the context
 5. Remove all GetContext() calls and their surrounding pre-processors
 6. Change all GetContext methods so that only the if statment body executes
 7. Update klsGLCanvas wxGLCanvas constructor call (old one is in a comment next to it)
