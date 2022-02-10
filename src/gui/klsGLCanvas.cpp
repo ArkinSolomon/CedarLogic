@@ -38,7 +38,8 @@ EVT_TIMER(SCROLL_TIMER_ID, klsGLCanvas::OnScrollTimer)
 END_EVENT_TABLE()
 
 klsGLCanvas::klsGLCanvas(wxWindow *parent, const wxString &name, wxWindowID id,
-                         const wxPoint &pos, const wxSize &size, long style) : wxGLCanvas(parent, id, NULL, pos, size, style | wxFULL_REPAINT_ON_RESIZE | wxWANTS_CHARS, name), context(this)//wxGLCanvas(parent, (wxGLCanvas*) NULL, id, pos, size, style|wxFULL_REPAINT_ON_RESIZE|wxWANTS_CHARS, name ) {
+                         const wxPoint &pos, const wxSize &size, long style) : wxGLCanvas(parent, id, NULL, pos, size, style | wxFULL_REPAINT_ON_RESIZE | wxWANTS_CHARS, name), context(this)
+                         //wxGLCanvas(parent, (wxGLCanvas*) NULL, id, pos, size, style|wxFULL_REPAINT_ON_RESIZE|wxWANTS_CHARS, name ) {
 {
   cout << "Entered klsGLCanvas constructor" << endl;
 
@@ -130,8 +131,8 @@ wxImage klsGLCanvas::renderToImage(unsigned long width, unsigned long height, un
   wxBitmap theBM(width, height, colorDepth);
 
   // Get a memory hardware device context for writing to the bitmap DIB Section:
-  // wxMemoryDC myDC;
-  // myDC.SelectObject(theBM);
+  wxMemoryDC myDC;
+  myDC.SelectObject(theBM);
   // WXHDC theHDC = myDC.GetHDC();
 
   // The basics of setting up OpenGL to render to the bitmap are found at:
@@ -415,7 +416,7 @@ void klsGLCanvas::klsGLCanvasRender(bool noColor)
 
 void klsGLCanvas::wxOnPaint(wxPaintEvent &event)
 {
-  // cout << "Starting klsGLCanvas (wxOnPaint)" << endl;
+  cout << "Starting klsGLCanvas (wxOnPaint)" << endl;
   
   wxPaintDC dc(this);
   // #ifndef __WXMOTIF__

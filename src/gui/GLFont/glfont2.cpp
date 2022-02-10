@@ -16,8 +16,9 @@ using namespace std;
 #ifdef _WINDOWS
 #include <windows.h>
 #endif
-#if defined(__APPLE__)
+#ifdef __APPLE__
 #include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
 #else
 #include <GL/gl.h>
 #endif

@@ -1,9 +1,11 @@
 {
   "files.associations": {
+    "*.yml": "yaml",
     "fstream": "cpp",
     "filesystem": "cpp",
     "stdexcept": "cpp",
     "string": "cpp",
-    "ios": "cpp"
+    "ios": "cpp",
+    "stack": "cpp"
   }
 }

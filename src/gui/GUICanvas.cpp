@@ -712,7 +712,7 @@ void GUICanvas::OnMouseMove( GLdouble glX, GLdouble glY, bool ShiftDown, bool Ct
 		// Show the new buffer:
 		glFlush();
 		SwapBuffers();
-    // cout << "Done rendering" << endl;
+    cout << "Done rendering" << endl;
 	}
 	
 	// clean up the selected gates vector

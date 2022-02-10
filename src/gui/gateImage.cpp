@@ -14,6 +14,7 @@
 #include "klsGLCanvas.h"
 #include "guiText.h"
 #include <fstream>
+#include "GLFont/glfont2.h"
 
 BEGIN_EVENT_TABLE(gateImage, wxStaticBitmap)
 EVT_PAINT(gateImage::OnPaint)
@@ -155,7 +156,6 @@ void gateImage::generateImage()
   setViewport();
   glViewport(0, 0, GATEIMAGESIZE, GATEIMAGESIZE);
 
-
   // Set the bitmap clear color:
   glClearColor(1.0, 1.0, 1.0, 0.0);
   glColor3b(0, 0, 0);
@@ -171,7 +171,6 @@ void gateImage::generateImage()
   glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
   renderMap();
-
   gImage = theBM.ConvertToImage();
 
   // Create a DIB section.
@@ -236,6 +235,7 @@ void gateImage::generateImage()
   // guiText::loadFont(wxGetApp().appSettings.textFontFile);
 
   // // Do the rendering here.
+  // renderMap();
 
   // // Flush the OpenGL buffer to make sure the rendering has happened:
 
@@ -244,7 +244,6 @@ void gateImage::generateImage()
   //   ::wglMakeCurrent( oldDC, oldhRC );
   //   //::wglMakeCurrent( NULL, NULL );
   //   ::wglDeleteContext( hRC );
-  // myDC.SelectObject(wxNullBitmap);
   // gImage = theBM.ConvertToImage();
 }
 
