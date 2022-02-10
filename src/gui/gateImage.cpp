@@ -124,7 +124,22 @@ void gateImage::setViewport() {
 // Print the canvas contents to a bitmap:
 void gateImage::generateImage() {
   #if __APPLE__
-    //MacOS rendering
+    wxSize sz = GetClientSize();
+    cout << "Generate image for " << gateName << endl;
+    wxBitmap theBM(GATEIMAGESIZE, GATEIMAGESIZE, 32);
+    wxPaintDC myDC(this);
+    myDC.DrawBitmap(theBM, 0, 0, false);
+    glFlush();
+    setViewport();
+    glViewport(0, 0, GATEIMAGESIZE, GATEIMAGESIZE);
+    glClearColor(1.0, 1.0, 1.0, 0.0);
+    glColor3b(0, 0, 0);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    renderMap();
+    gImage = theBM.ConvertToImage();
   #else
     //WARNING!!! Heavily platform-dependent code ahead! This only works in MS Windows because of the
     // DIB Section OpenGL rendering.

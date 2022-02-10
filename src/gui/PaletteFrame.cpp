@@ -24,11 +24,18 @@ END_EVENT_TABLE()
 PaletteFrame::PaletteFrame( wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size ) 
 	: wxPanel( parent, id, pos, size, wxNO_BORDER ) {
 	paletteSizer = new wxBoxSizer( wxVERTICAL );
-	map < string, map < string, LibraryGate > >::iterator libWalk = wxGetApp().libraries.begin();
-	while (libWalk != wxGetApp().libraries.end()) {
-		strings.Add((const wxChar *)((libWalk->first).c_str())); // KAS
-		libWalk++;
-	}
+
+  //Changed method of generating strings since the library names are in ASCII and WxStrings are Unicode
+  for (auto const &pair : wxGetApp().libraries) {
+    strings.Add(wxString::FromAscii(pair.first.c_str()));
+  }
+  // map<string, map<string, LibraryGate>>::iterator libWalk = wxGetApp().libraries.begin();
+  // while (libWalk != wxGetApp().libraries.end())
+  // {
+  //   strings.Add((const wxChar *)((libWalk->first).c_str())); // KAS
+  //   libWalk++;
+  // }
+
 	listBox = new wxListBox(this, ID_LISTBOX, wxDefaultPosition, wxSize(0,strings.GetCount()*14), strings, wxLB_SINGLE);
 	paletteSizer->Add( listBox, wxSizerFlags(0).Expand().Border(wxALL, 0) );
 	paletteSizer->Show( listBox );

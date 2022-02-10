@@ -39,6 +39,7 @@ PaletteCanvas::~PaletteCanvas() {
 	for (unsigned int i = 0; i < gates.size(); i++) delete gates[i];
 }
 
+//Loads gates into the palette
 void PaletteCanvas::OnPaint( wxPaintEvent &event ) {
 	wxPaintDC dc(this);
 	if (!init) {
