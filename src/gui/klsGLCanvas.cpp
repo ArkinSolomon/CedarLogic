@@ -105,7 +105,21 @@ void klsGLCanvas::updateMiniMap() {
 // Print the canvas contents to a bitmap:
 wxImage klsGLCanvas::renderToImage( unsigned long width, unsigned long height, unsigned long colorDepth, bool noColor ) {
   #if __APPLE__
-    //MacOs rendering 
+    wxBitmap theBM(width, height, colorDepth);
+    wxMemoryDC myDC;
+    myDC.SelectObject(theBM);
+    reclaimViewport();
+    glViewport(0, 0, (GLint)width, (GLint)height);
+    glClearColor(1.0, 1.0, 1.0, 0.0);
+    glColor3b(0, 0, 0);
+    guiText::loadFont(wxGetApp().appSettings.textFontFile);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    glEnable(GL_LINE_SMOOTH);
+    klsGLCanvasRender(noColor);
+    glFlush();
+    SetCurrent(context);
+    return theBM.ConvertToImage();
   #elif _WIN32
     //WARNING!!! Heavily platform-dependent code ahead! This only works in MS Windows because of the
     // DIB Section OpenGL rendering.
@@ -198,18 +212,19 @@ wxImage klsGLCanvas::renderToImage( unsigned long width, unsigned long height, u
 // (This needs to be called everytime that the matrices will be used.)
 void klsGLCanvas::reclaimViewport( void ) {
 
-	// Set the projection matrix:	
-	glMatrixMode (GL_PROJECTION);
-	glLoadIdentity ();
+	// Set the projection matrix:
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
 
-	wxSize sz = GetClientSize();
-	// gluOrtho2D(left, right, bottom, top); (In world-space coords.)
-	gluOrtho2D(panX, panX + (sz.GetWidth() * viewZoom), panY - (sz.GetHeight() * viewZoom), panY); 
-	glViewport(0, 0, (GLint) sz.GetWidth(), (GLint) sz.GetHeight());
+  wxSize sz = GetClientSize();
+  // gluOrtho2D(left, right, bottom, top); (In world-space coords.)
+  gluOrtho2D(panX, panX + (sz.GetWidth() * viewZoom), panY - (sz.GetHeight() * viewZoom), panY);
+  glViewport(0, 0, (GLint)sz.GetWidth() * GetContentScaleFactor(), (GLint)sz.GetHeight() * GetContentScaleFactor());
 
-	// Set the model matrix:
-	glMatrixMode (GL_MODELVIEW);
-	glLoadIdentity ();
+  // Set the model matrix:
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+
 }
 
 
@@ -264,123 +279,137 @@ void klsGLCanvas::getViewport( GLPoint2f& p1, GLPoint2f& p2 ) {
 	p2.y = panY - (sz.GetHeight()*viewZoom);
 }
 
-void klsGLCanvas::klsGLCanvasRender( bool noColor ) {
-	int w, h;
-	GetClientSize(&w, &h);
+void klsGLCanvas::klsGLCanvasRender(bool noColor)
+{
+  int w, h;
+  GetClientSize(&w, &h);
 
-	//clear window
-	glClear(GL_COLOR_BUFFER_BIT);
-	glMatrixMode (GL_MODELVIEW);
-	glLoadIdentity ();
-	glColor4f( 0, 0, 0, 1 );
+  //clear window
+  glClear(GL_COLOR_BUFFER_BIT);
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  glColor4f(0, 0, 0, 1);
 
-	// Render the background grid:
-	if( (horizOn || vertOn) && wxGetApp().appSettings.gridlineVisible ) {
-		// Note: since adding a very few line primitives is a small price to pay,
-		//	we not only draw the grid for the visible area, but also (PAN_STEP*viewZoom)
-		//	around the visible area.  This is so when the user pans, there will be no
-		//	flicker at the edge of the grid.
-		
-		GLfloat oldColor[4];
-		glGetFloatv( GL_CURRENT_COLOR, oldColor );
+  // Render the background grid:
+  if ((horizOn || vertOn) && wxGetApp().appSettings.gridlineVisible)
+  {
+    // Note: since adding a very few line primitives is a small price to pay,
+    //	we not only draw the grid for the visible area, but also (PAN_STEP*viewZoom)
+    //	around the visible area.  This is so when the user pans, there will be no
+    //	flicker at the edge of the grid.
 
-		GLdouble vW = panX;
-		GLdouble vE = panX + (w * viewZoom);
-		GLdouble vS = panY - (h * viewZoom);
-		GLdouble vN = panY;
+    GLfloat oldColor[4];
+    glGetFloatv(GL_CURRENT_COLOR, oldColor);
 
-		if( horizOn ) {
-			long gridSpacing = max( (long) (horizSpacing + 0.5), (long) 1 ); // Limit the grid spacing options to integer values!
-			long glSpacing = max( (long) gridSpacing, (long) (MIN_GRID_SCREEN_SPACING * viewZoom) );
+    GLdouble vW = panX;
+    GLdouble vE = panX + (w * viewZoom);
+    GLdouble vS = panY - (h * viewZoom);
+    GLdouble vN = panY;
 
-			long firstX = (long)(glSpacing * floor( (vW-(PAN_STEP*viewZoom)) / (float) glSpacing + 0.5 ));
+    if (horizOn)
+    {
+      // cout << "Drawing horizontal grid" << endl;
 
-			glColor4fv( hColor );
-			glBegin(GL_LINES);
-			for( long x = firstX; x < vE + (PAN_STEP*viewZoom); x += glSpacing ) {
-				glVertex2f( x, vS-(PAN_STEP*viewZoom) );
-				glVertex2f( x, vN+(PAN_STEP*viewZoom) );
-			}
-			glEnd();
-		}
+      long gridSpacing = max((long)(horizSpacing + 0.5), (long)1); // Limit the grid spacing options to integer values!
+      long glSpacing = max((long)gridSpacing, (long)(MIN_GRID_SCREEN_SPACING * viewZoom));
 
-		if( vertOn ) {
-			long gridSpacing = max( (long) (vertSpacing + 0.5), (long) 1 ); // Limit the grid spacing options to integer values!
-			long glSpacing = max( (long) gridSpacing, (long) (MIN_GRID_SCREEN_SPACING * viewZoom) );
+      long firstX = (long)(glSpacing * floor((vW - (PAN_STEP * viewZoom)) / (float)glSpacing + 0.5));
 
-			long firstY = (long)(glSpacing * floor( (vS-(PAN_STEP*viewZoom)) / (float) glSpacing + 0.5 ));
+      glColor4fv(hColor);
+      glBegin(GL_LINES);
+      for (long x = firstX; x < vE + (PAN_STEP * viewZoom); x += glSpacing)
+      {
+        glVertex2f(x, vS - (PAN_STEP * viewZoom));
+        glVertex2f(x, vN + (PAN_STEP * viewZoom));
+      }
+      glEnd();
+    }
 
-			glColor4fv( vColor );
-			glBegin(GL_LINES);
-			for( long y = firstY; y < vN + (PAN_STEP*viewZoom); y += glSpacing ) {
-				glVertex2f( vW-(PAN_STEP*viewZoom), y );
-				glVertex2f( vE+(PAN_STEP*viewZoom), y );
-			}
-			glEnd();
-		}
+    if (vertOn)
+    {
+      // cout << "Drawing vertical grid" << endl;
 
-		// Set the color back to the old color:
-		glColor4fv( oldColor );
-	}
+      long gridSpacing = max((long)(vertSpacing + 0.5), (long)1); // Limit the grid spacing options to integer values!
+      long glSpacing = max((long)gridSpacing, (long)(MIN_GRID_SCREEN_SPACING * viewZoom));
 
+      long firstY = (long)(glSpacing * floor((vS - (PAN_STEP * viewZoom)) / (float)glSpacing + 0.5));
+
+      glColor4fv(vColor);
+      glBegin(GL_LINES);
+      for (long y = firstY; y < vN + (PAN_STEP * viewZoom); y += glSpacing)
+      {
+        glVertex2f(vW - (PAN_STEP * viewZoom), y);
+        glVertex2f(vE + (PAN_STEP * viewZoom), y);
+      }
+      glEnd();
+    }
+
+    // Set the color back to the old color:
+    glColor4fv(oldColor);
+  }
 
 // Draw the canvas debugging info if requested:
 #ifdef CANVAS_DEBUG_TESTS_ON
 
-	glMatrixMode (GL_MODELVIEW);
-	glLoadIdentity ();
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
 
-	// Origin Marker:
-	glColor4f( 0,0,0,1 );
-	glBegin( GL_LINES );
-		glVertex2f( -20, 20 );
-		glVertex2f( 20, -20 );
-		glVertex2f( -20, -20 );
-		glVertex2f( 20, 20 );
-	glEnd();	
+  // Origin Marker:
+  glColor4f(1, 0, 1, 1);
+  glBegin(GL_LINES);
+  glVertex2f(-20, 20);
+  glVertex2f(20, -20);
+  glVertex2f(-20, -20);
+  glVertex2f(20, 20);
+  glEnd();
 
-	mouseButton whichB = BUTTON_LEFT;
-	glColor4f( 1, 0, 0, 1 );
-	if( isDragging( whichB ) ) {
-		GLPoint2f start = getDragStartCoords( whichB );
-		GLPoint2f end = getMouseCoords();
+  mouseButton whichB = BUTTON_LEFT;
+  glColor4f(1, 0, 0, 1);
+  if (isDragging(whichB))
+  {
+    GLPoint2f start = getDragStartCoords(whichB);
+    GLPoint2f end = getMouseCoords();
 
-		glBegin(GL_LINES);
-			glVertex2f( start.x, start.y );
-			glVertex2f( end.x, end.y );
-		glEnd();
-	}
+    glBegin(GL_LINES);
+    glVertex2f(start.x, start.y);
+    glVertex2f(end.x, end.y);
+    glEnd();
+  }
 
-	whichB = BUTTON_MIDDLE;
-	glColor4f( 0, 1, 0, 1 );
-	if( isDragging( whichB ) ) {
-		GLPoint2f start = getDragStartCoords( whichB );
-		GLPoint2f end = getMouseCoords();
+  whichB = BUTTON_MIDDLE;
+  glColor4f(0, 1, 0, 1);
+  if (isDragging(whichB))
+  {
+    GLPoint2f start = getDragStartCoords(whichB);
+    GLPoint2f end = getMouseCoords();
 
-		glBegin(GL_LINES);
-			glVertex2f( start.x, start.y );
-			glVertex2f( end.x, end.y );
-		glEnd();
-	}
+    glBegin(GL_LINES);
+    glVertex2f(start.x, start.y);
+    glVertex2f(end.x, end.y);
+    glEnd();
+  }
 
-	whichB = BUTTON_RIGHT;
-	glColor4f( 0, 0, 1, 1 );
-	if( isDragging( whichB ) ) {
-		GLPoint2f start = getDragStartCoords( whichB );
-		GLPoint2f end = getMouseCoords();
+  whichB = BUTTON_RIGHT;
+  glColor4f(0, 0, 1, 1);
+  if (isDragging(whichB))
+  {
+    GLPoint2f start = getDragStartCoords(whichB);
+    GLPoint2f end = getMouseCoords();
 
-		glBegin(GL_LINES);
-			glVertex2f( start.x, start.y );
-			glVertex2f( end.x, end.y );
-		glEnd();
-	}
+    glBegin(GL_LINES);
+    glVertex2f(start.x, start.y);
+    glVertex2f(end.x, end.y);
+    glEnd();
+  }
 
 #endif
 
-	// Call subclassed Render():
-	glMatrixMode (GL_MODELVIEW);
-	glLoadIdentity ();
-	OnRender( noColor );
+  // Call subclassed Render():
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  OnRender(noColor);
+
+  // cout << "Done rendering" << endl;
 }
 
 
@@ -392,7 +421,7 @@ void klsGLCanvas::wxOnPaint(wxPaintEvent& event) {
     #endif
   #endif
 
-	SetCurrent(this);
+	SetCurrent(context);
 	// Init OpenGL once, but after SetCurrent
 	if (!glInitialized)
 	{
@@ -423,7 +452,7 @@ void klsGLCanvas::wxOnPaint(wxPaintEvent& event) {
 		glInitialized = true;
 	}
 
-	SetCurrent(this);
+	SetCurrent(context);
 	reclaimViewport();
 	klsGLCanvasRender();
 	
@@ -451,7 +480,7 @@ void klsGLCanvas::wxOnSize(wxSizeEvent& event)
     #endif
   #endif
     {
-        SetCurrent(this);
+        SetCurrent(context);
         Refresh();
     }
 
