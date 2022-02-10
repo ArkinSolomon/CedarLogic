@@ -210,8 +210,8 @@ MainFrame::MainFrame(const wxString& title, string cmdFilename)
 		delete bmp[i];
 	}
 
-    CreateStatusBar(2);
-    SetStatusText("");
+  CreateStatusBar(2);
+  SetStatusText("");
 
 	mainSizer = new wxBoxSizer( wxHORIZONTAL );
 	wxBoxSizer* leftPaneSizer = new wxBoxSizer( wxVERTICAL );
@@ -224,7 +224,7 @@ MainFrame::MainFrame(const wxString& title, string cmdFilename)
 	miniMap = new klsMiniMap(this, wxID_ANY, wxDefaultPosition, wxSize(130, 100));
 	leftPaneSizer->Add( miniMap, wxSizerFlags(0).Expand().Border(wxALL, 0) );
 	mainSizer->Add( leftPaneSizer, wxSizerFlags(0).Expand().Border(wxALL, 0) );
-	
+
 	// set up the panel and make canvases
 	gCircuit = new GUICircuit();
 	commandProcessor = new wxCommandProcessor();
@@ -237,11 +237,13 @@ MainFrame::MainFrame(const wxString& title, string cmdFilename)
 
 	//add 1 tab: Left loop to allow for different default
 	for (int i = 0; i < 1; i++) {
-		canvases.push_back(new GUICanvas(canvasBook, gCircuit, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS));
-		ostringstream oss;
-		oss << "Page " << (i+1);
-		canvasBook->AddPage(canvases[i], (const wxChar *)oss.str().c_str(), (i == 0 ? true : false));  // KAS
-	}
+    canvases.push_back(new GUICanvas(canvasBook, gCircuit, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS));
+    ostringstream oss;
+    oss << "Page " << (i + 1);
+    cout << "Adding page " << i + 1 << endl;
+    canvasBook->AddPage(canvases[i], (const wxChar *)oss.str().c_str(), i == 0); // KAS
+    cout << "Added page " << oss.str().c_str() << endl;
+	} 
 
 	currentCanvas = canvases[0];
 	gCircuit->setCurrentCanvas(currentCanvas);
@@ -249,15 +251,15 @@ MainFrame::MainFrame(const wxString& title, string cmdFilename)
 	mainSizer->Show(canvasBook);
 	currentCanvas->SetFocus();
 
-	SetSizer( mainSizer);
+	SetSizer(mainSizer);
 		
 	threadLogic *thread = CreateThread();
 	autoSaveThread *autoThread = CreateSaveThread();
 	
-    if ( thread->Run() != wxTHREAD_NO_ERROR )
-    {
-       wxLogError("Can't start thread!");
-    }
+  if ( thread->Run() != wxTHREAD_NO_ERROR )
+  {
+    wxLogError("Can't start thread!");
+  }
 	
 	simTimer = new wxTimer(this, TIMER_ID);
 	idleTimer = new wxTimer(this, IDLETIMER_ID);

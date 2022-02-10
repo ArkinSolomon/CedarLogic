@@ -27,7 +27,7 @@ static const wxCmdLineEntryDesc g_cmdLineDesc[] =
 	{ wxCMD_LINE_NONE }
 };
 
-MainApp::M, binApp()
+MainApp::MainApp()
      : m_semAllDone(), simulate(), readyToSend()
 {
     m_waitingUntilAllDone = false;

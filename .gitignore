@@ -7,3 +7,9 @@ res/settings.ini
 res/KLS_Logic.chw
 /.vs
 /CMakeSettings.json
+**/*.o
+**/.DS_Store
+**/*.log
+CMakeCache.txt
+CMakeFiles/
+**/*.tmp

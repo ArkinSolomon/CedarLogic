@@ -1,5 +1,5 @@
 
-#include "CedarLogic.h"
+#include "../CedarLogic.h"
 #include "version.h"
 #include <map>
 using namespace std;

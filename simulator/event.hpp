@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 #include <optional>
-#include <logic.hpp>
+#include "logic.hpp"
 
 enum class Entities {
 	AND, OR, XOR, NAND, NOR, NOT, WIRE, GUI_JUNCTION

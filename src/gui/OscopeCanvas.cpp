@@ -29,7 +29,8 @@ END_EVENT_TABLE()
 
 OscopeCanvas::OscopeCanvas(wxWindow *parent, GUICircuit* gCircuit, wxWindowID id,
     const wxPoint& pos, const wxSize& size, long style, const wxString& name)
-	: wxGLCanvas( parent, id, pos, size, style|wxFULL_REPAINT_ON_RESIZE|wxSUNKEN_BORDER ) {
+	: wxGLCanvas(parent, id, NULL, pos, size, style|wxFULL_REPAINT_ON_RESIZE|wxWANTS_CHARS, name){
+  //wxGLCanvas( parent, id, pos, size, style|wxFULL_REPAINT_ON_RESIZE|wxSUNKEN_BORDER) 
 
 	this->gCircuit = gCircuit;
 	m_init = false;
@@ -183,11 +184,13 @@ void OscopeCanvas::OnRender(){
 
 void OscopeCanvas::OnPaint(wxPaintEvent& event){ 
 	wxPaintDC dc(this);
-#ifndef __WXMOTIF__
-	if (!GetContext()) return;
-#endif
+  #if _WIN32
+    #ifndef __WXMOTIF__
+      if (!GetContext()) return;
+    #endif
+  #endif
 
-	SetCurrent();
+	SetCurrent(this);
 	// Init OpenGL once, but after SetCurrent
 	if (!m_init)
 	{
@@ -215,12 +218,14 @@ void OscopeCanvas::OnPaint(wxPaintEvent& event){
 void OscopeCanvas::OnSize(wxSizeEvent& event)
 {
     // this is also necessary to update the context on some platforms
-    wxGLCanvas::OnSize(event);
+    wxGLCanvas::HandleWindowEvent(event);
 
     // set GL viewport (not called by wxGLCanvas::OnSize on all platforms...)
-#ifndef __WXMOTIF__
-    if (GetContext())
-#endif
+  #if _WIN32
+    #ifndef __WXMOTIF__
+        if (GetContext())
+    #endif
+  #endif
     {
         Refresh();
         //Render();
@@ -450,77 +455,81 @@ void OscopeCanvas::UpdateMenu()
 
 // Print the canvas contents to a bitmap:
 wxImage OscopeCanvas::generateImage(){ 
-//WARNING!!! Heavily platform-dependent code ahead! This only works in MS Windows because of the
-// DIB Section OpenGL rendering.
+  #if __APPLE__
+    //MacOS rendering
+  #else
+    //WARNING!!! Heavily platform-dependent code ahead! This only works in MS Windows because of the
+    // DIB Section OpenGL rendering.
 
-	wxSize sz = GetClientSize();
+    wxSize sz = GetClientSize();
 
-	// Create a DIB section.
-	// (The Windows wxBitmap implementation will create a DIB section for a bitmap if you set
-	// a color depth of 24 or greater.)
-	wxBitmap theBM( sz.GetWidth(), sz.GetHeight(), 32 );
-	
-	// Get a memory hardware device context for writing to the bitmap DIB Section:
-	wxMemoryDC myDC;
-	myDC.SelectObject(theBM);
-	WXHDC theHDC = myDC.GetHDC();
+    // Create a DIB section.
+    // (The Windows wxBitmap implementation will create a DIB section for a bitmap if you set
+    // a color depth of 24 or greater.)
+    wxBitmap theBM( sz.GetWidth(), sz.GetHeight(), 32 );
+    
+    // Get a memory hardware device context for writing to the bitmap DIB Section:
+    wxMemoryDC myDC;
+    myDC.SelectObject(theBM);
+    WXHDC theHDC = myDC.GetHDC();
 
-	// The basics of setting up OpenGL to render to the bitmap are found at:
-	// http://www.nullterminator.net/opengl32.html
-	// http://www.codeguru.com/cpp/g-m/opengl/article.php/c5587/
+    // The basics of setting up OpenGL to render to the bitmap are found at:
+    // http://www.nullterminator.net/opengl32.html
+    // http://www.codeguru.com/cpp/g-m/opengl/article.php/c5587/
 
-    PIXELFORMATDESCRIPTOR pfd;
-    int iFormat;
+      PIXELFORMATDESCRIPTOR pfd;
+      int iFormat;
 
-    // set the pixel format for the DC
-    ::ZeroMemory( &pfd, sizeof( pfd ) );
-    pfd.nSize = sizeof( pfd );
-    pfd.nVersion = 1;
-    pfd.dwFlags = PFD_DRAW_TO_BITMAP | PFD_SUPPORT_OPENGL | PFD_SUPPORT_GDI;
-    pfd.iPixelType = PFD_TYPE_RGBA;
-    pfd.cColorBits = 32;
-    pfd.cDepthBits = 16;
-    pfd.iLayerType = PFD_MAIN_PLANE;
-    iFormat = ::ChoosePixelFormat( (HDC) theHDC, &pfd );
-    ::SetPixelFormat( (HDC) theHDC, iFormat, &pfd );
+      // set the pixel format for the DC
+      ::ZeroMemory( &pfd, sizeof( pfd ) );
+      pfd.nSize = sizeof( pfd );
+      pfd.nVersion = 1;
+      pfd.dwFlags = PFD_DRAW_TO_BITMAP | PFD_SUPPORT_OPENGL | PFD_SUPPORT_GDI;
+      pfd.iPixelType = PFD_TYPE_RGBA;
+      pfd.cColorBits = 32;
+      pfd.cDepthBits = 16;
+      pfd.iLayerType = PFD_MAIN_PLANE;
+      iFormat = ::ChoosePixelFormat( (HDC) theHDC, &pfd );
+      ::SetPixelFormat( (HDC) theHDC, iFormat, &pfd );
 
-    // create and enable the render context (RC)
-    HGLRC hRC = ::wglCreateContext( (HDC) theHDC );
-    HGLRC oldhRC = ::wglGetCurrentContext();
-    HDC oldDC = ::wglGetCurrentDC();
-    ::wglMakeCurrent( (HDC) theHDC, hRC );
+      // create and enable the render context (RC)
+      HGLRC hRC = ::wglCreateContext( (HDC) theHDC );
+      HGLRC oldhRC = ::wglGetCurrentContext();
+      HDC oldDC = ::wglGetCurrentDC();
+      ::wglMakeCurrent( (HDC) theHDC, hRC );
 
-	// Setup the viewport for rendering:
-//	setViewport();
-	// Reset the glViewport to the size of the bitmap:
-//	glViewport(0, 0, (GLint) sz.GetWidth(), (GLint) sz.GetHeight());
-	
-	// Set the bitmap clear color:
-	glClearColor (1.0, 1.0, 1.0, 0.0);
-	glColor3b(0, 0, 0);
-		
-	//TODO: Check if alpha is hardware supported, and
-	// don't enable it if not!
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-	
-	//*********************************
-	//Edit by Joshua Lansford 4/09/07
-	//anti-alis ing is nice
-	glEnable( GL_LINE_SMOOTH );
-	//End of edit
+    // Setup the viewport for rendering:
+  //	setViewport();
+    // Reset the glViewport to the size of the bitmap:
+  //	glViewport(0, 0, (GLint) sz.GetWidth(), (GLint) sz.GetHeight());
+    
+    // Set the bitmap clear color:
+    glClearColor (1.0, 1.0, 1.0, 0.0);
+    glColor3b(0, 0, 0);
+      
+    //TODO: Check if alpha is hardware supported, and
+    // don't enable it if not!
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    
+    //*********************************
+    //Edit by Joshua Lansford 4/09/07
+    //anti-alis ing is nice
+    glEnable( GL_LINE_SMOOTH );
+    //End of edit
 
-	// Do the rendering here.
-	OnRender();
+    // Do the rendering here.
+    OnRender();
 
-	// Flush the OpenGL buffer to make sure the rendering has happened:	
-	glFlush();
-	
-	// Destroy the OpenGL rendering context, release the memDC, and
-	// convert the DIB Section into a wxImage to return to the caller:
-    ::wglMakeCurrent( oldDC, oldhRC );
-    //::wglMakeCurrent( NULL, NULL );
-    ::wglDeleteContext( hRC );
-	myDC.SelectObject(wxNullBitmap);
-	return theBM.ConvertToImage();
+    // Flush the OpenGL buffer to make sure the rendering has happened:	
+    glFlush();
+    
+    // Destroy the OpenGL rendering context, release the memDC, and
+    // convert the DIB Section into a wxImage to return to the caller:
+      ::wglMakeCurrent( oldDC, oldhRC );
+      //::wglMakeCurrent( NULL, NULL );
+      ::wglDeleteContext( hRC );
+    myDC.SelectObject(wxNullBitmap);
+    return theBM.ConvertToImage();
+  #endif
 }
