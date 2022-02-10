@@ -99,8 +99,22 @@ void klsMiniMap::setViewport() {
 
 // Print the canvas contents to a bitmap:
 void klsMiniMap::generateImage() {
-  #if __APPLE__
-    //MacOs rendering 
+  #if __APPLE__ 
+
+  wxSize sz = GetClientSize();
+  wxBitmap theBM( sz.GetWidth(), sz.GetHeight(), 32 );
+  setViewport();
+  glViewport(0, 0, (GLint) sz.GetWidth() * GetContentScaleFactor(), (GLint) sz.GetHeight() * GetContentScaleFactor());
+	glClearColor (1.0, 1.0, 1.0, 0.0);
+	glColor3b(0, 0, 0);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+  glEnable( GL_LINE_SMOOTH );
+  guiText::loadFont(wxGetApp().appSettings.textFontFile);
+  renderMap();
+  glFlush();
+	mapImage = theBM.ConvertToImage();
+
   #elif _WIN32
     //WARNING!!! Heavily platform-dependent code ahead! This only works in MS Windows because of the
     // DIB Section OpenGL rendering.

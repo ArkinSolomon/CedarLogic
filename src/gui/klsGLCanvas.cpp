@@ -104,7 +104,6 @@ void klsGLCanvas::updateMiniMap() {
 
 // Print the canvas contents to a bitmap:
 wxImage klsGLCanvas::renderToImage( unsigned long width, unsigned long height, unsigned long colorDepth, bool noColor ) {
-
   #if __APPLE__
     //MacOs rendering 
   #elif _WIN32
@@ -443,7 +442,7 @@ void klsGLCanvas::wxOnEraseBackground(wxEraseEvent& WXUNUSED(event))
 void klsGLCanvas::wxOnSize(wxSizeEvent& event)
 {
     // this is also necessary to update the context on some platforms
-    wxGLCanvas::HandleWindowEvent(event);
+    // wxGLCanvas::HandleWindowEvent(event);
 
     // set GL viewport (not called by wxGLCanvas::OnSize on all platforms...)
   #ifdef _WIN32

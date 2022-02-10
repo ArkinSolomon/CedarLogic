@@ -13,3 +13,6 @@ res/KLS_Logic.chw
 CMakeCache.txt
 CMakeFiles/
 **/*.tmp
+
+#CedarLogic executable
+CedarLogic
