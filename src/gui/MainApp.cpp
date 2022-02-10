@@ -13,6 +13,12 @@
 #include "wx/cmdline.h"
 #include "../version.h"
 
+#ifdef __APPLE__
+  #include <mach-o/dyld.h>
+  #include <limits.h>
+  #include <string>
+#endif
+
 IMPLEMENT_APP(MainApp)
 
 static const wxCmdLineEntryDesc g_cmdLineDesc[] =
@@ -21,7 +27,7 @@ static const wxCmdLineEntryDesc g_cmdLineDesc[] =
 	{ wxCMD_LINE_NONE }
 };
 
-MainApp::MainApp()
+MainApp::M, binApp()
      : m_semAllDone(), simulate(), readyToSend()
 {
     m_waitingUntilAllDone = false;
@@ -95,14 +101,21 @@ bool MainApp::OnInit()
 
 void MainApp::loadSettings() {
 
-	// Get app full path.
-	HMODULE hModule = GetModuleHandle(NULL);
-	CHAR path[MAX_PATH];
-	GetModuleFileName(hModule, path, MAX_PATH);
-
 	// Find path to exe so that files can be loaded relative to it
 	// even when the program is run from somewhere else.
-	pathToExe = path;
+#ifdef WIN32
+  HMODULE hModule = GetModuleHandle(NULL);
+  CHAR path[MAX_PATH];
+  GetModuleFileName(hModule, path, MAX_PATH);
+  pathToExe = path;
+#else
+  char buf[PATH_MAX];
+  uint32_t bufsize = PATH_MAX;
+  if (!_NSGetExecutablePath(buf, &bufsize))
+    puts(buf);
+  pathToExe = string(buf);
+#endif
+
 	while (!pathToExe.empty()) {
 		if (pathToExe.back() != '/' && pathToExe.back() != '\\') {
 			pathToExe.pop_back();
