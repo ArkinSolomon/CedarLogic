@@ -137,7 +137,7 @@ bool guiGate::isConnected(string c) {
 	return (connections.find(c) != connections.end());
 }
 
-void guiGate::draw(bool color) {
+void guiGate::draw(bool color, wxMemoryDC* dc) {
 
 	GLint oldStipple = 0; // The old line stipple pattern, if needed.
 	GLint oldRepeat = 0;  // The old line stipple repeat pattern, if needed.
@@ -145,7 +145,6 @@ void guiGate::draw(bool color) {
 
 	// Position the gate at its x and y coordinates:
 	glLoadMatrixd(mModel);
-
 
 	if( selected && color ) {
 		// Store the old line stipple pattern:
@@ -160,9 +159,20 @@ void guiGate::draw(bool color) {
 
 	// Draw the gate:
 	glBegin(GL_LINES);
+  #if __APPLE__
+  if (dc == nullptr) return;
+  for (unsigned int i = 0; i < vertices.size(); i += 2)
+  {
+    GLPoint2f vertex1 = vertices[i];
+    GLPoint2f vertex2 = vertices[i + 1];
+    dc->DrawLine(vertex1.x * 6, vertex1.y * 6, vertex2.x * 6, vertex2.y * 6);
+  }
+  #else
 	for( unsigned int i = 0; i < vertices.size(); i++ ) {
+    cout << "Draw vertex " << vertices[i].x << ", " << vertices[i].y << endl;
 		glVertex2f( vertices[i].x, vertices[i].y );
 	}
+  #endif
 	glEnd();
 
 	// Reset the stipple parameters:
