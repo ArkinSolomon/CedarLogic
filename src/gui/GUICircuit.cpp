@@ -63,7 +63,6 @@ guiGate* GUICircuit::createGate(string gateName, long id, bool noOscope) {
 	LibraryGate gateDef = wxGetApp().libraries[libName][gateName];
 	//wxGetApp().libraries[libName].getGate(gateName, gateDef);
 	
-
 	string ggt = gateDef.guiType;
 	
 	if (ggt == "REGISTER")

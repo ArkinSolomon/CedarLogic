@@ -143,7 +143,7 @@ public:
 
 	void declareInput(string name) { isInput[name] = true; };
 	void declareOutput(string name) { isInput[name] = false; };
-	virtual void draw(bool color = true, wxMemoryDC* = nullptr);
+	virtual void draw(bool color = true, wxMemoryDC* = nullptr, double scale = 1);
 	void setGLcoords( float x, float y, bool noUpdateWires = false );
 	void getGLcoords( float &x, float &y );
 	

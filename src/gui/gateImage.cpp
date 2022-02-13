@@ -136,7 +136,11 @@ void gateImage::generateImage() {
   cout << "Generate image for " << gateName << endl;
   wxBitmap theBM(GATEIMAGESIZE, GATEIMAGESIZE, 32);
   theBM.UseAlpha();
-  wxMemoryDC myDC(theBM);
+  wxMemoryDC myDC(theBM); 
+  double scale = GetContentScaleFactor();
+  int h, w;
+  myDC.GetSize(&h, &w);
+  myDC.SetDeviceOrigin(h / 4 * scale, w / 4 * scale);
   glFlush();
   setViewport();
   glViewport(0, 0, GATEIMAGESIZE, GATEIMAGESIZE);
@@ -146,7 +150,7 @@ void gateImage::generateImage() {
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-  m_gate->draw(false, &myDC);
+  m_gate->draw(false, &myDC, scale);
   // renderMap();
   myDC.SelectObject(wxNullBitmap);
   gImage = theBM.ConvertToImage();
@@ -240,8 +244,10 @@ void gateImage::renderMap() {
   glLoadIdentity();
   glColor4f(0, 0, 0, 1);
 
+  #if _WIN32
   if (m_gate != NULL)
     m_gate->draw();
+  #endif
 }
 
 void gateImage::update() {
