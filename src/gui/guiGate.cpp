@@ -138,6 +138,17 @@ bool guiGate::isConnected(string c) {
 }
 
 void guiGate::draw(bool color, wxMemoryDC* dc, double scale) {
+  
+  #if __APPLE__
+  if (dc == nullptr) return;
+  for (unsigned int i = 1; i < vertices.size(); i += 2) {
+    GLPoint2f vertex1 = vertices[i - 1];
+    GLPoint2f vertex2 = vertices[i];
+
+    //I found 1.5x to be a good size, may differ on other devices?
+    dc->DrawLine(vertex1.x * scale * 1.5, vertex1.y * scale * 1.5, vertex2.x * scale * 1.5, vertex2.y * scale * 1.5);
+  }
+  #else
 
 	GLint oldStipple = 0; // The old line stipple pattern, if needed.
 	GLint oldRepeat = 0;  // The old line stipple repeat pattern, if needed.
@@ -160,20 +171,10 @@ void guiGate::draw(bool color, wxMemoryDC* dc, double scale) {
 	// Draw the gate:
 	glBegin(GL_LINES);
 
-  #if __APPLE__
-  if (dc == nullptr) return;
-  for (unsigned int i = 1; i < vertices.size(); i += 2) {
-    GLPoint2f vertex1 = vertices[i - 1];
-    GLPoint2f vertex2 = vertices[i];
-
-    //I found 1.5x to be a good size, may differ on other devices?
-    dc->DrawLine(vertex1.x * scale * 1.5, vertex1.y * scale * 1.5, vertex2.x * scale * 1.5, vertex2.y * scale * 1.5);
-  }
-  #else
 	for( unsigned int i = 0; i < vertices.size(); i++ ) {
 		glVertex2f( vertices[i].x, vertices[i].y );
 	}
-  #endif
+
 
 	glEnd();
 
@@ -185,6 +186,7 @@ void guiGate::draw(bool color, wxMemoryDC* dc, double scale) {
 		}
 		glLineStipple( oldRepeat, oldStipple );
 	}
+  #endif
 }
 
 void guiGate::setGLcoords( float x, float y, bool noUpdateWires ) {

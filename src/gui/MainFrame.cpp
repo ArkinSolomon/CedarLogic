@@ -18,6 +18,7 @@
 #include "wx/toolbar.h"
 #include "wx/clipbrd.h"
 #include "wx/dataobj.h"
+#include "wx/settings.h"
 #include "CircuitParse.h"
 #include "OscopeFrame.h"
 #include "wx/docview.h"
@@ -165,8 +166,11 @@ MainFrame::MainFrame(const wxString& title, string cmdFilename)
 	string    bitmaps[] = {"new", "open", "save", "undo", "redo", "copy", "paste", "print", "help", "pause", "step", "zoomin", "zoomout", "locked", "newtab"};
 	wxBitmap *bmp[15];
 
+  // Determine if we're using light or dark them
+  string theme = wxSystemSettings::GetAppearance().IsDark() ? "dark" : "light";
+
 	for (int  i = 0; i < 15; i++) {
-		bitmaps[i] = wxGetApp().pathToExe + "res/bitmaps/" + bitmaps[i] + ".bmp";
+		bitmaps[i] = wxGetApp().pathToExe + "res/bitmaps/" + theme + "/" + bitmaps[i] + ".bmp";
 		wxFileInputStream in(bitmaps[i]);
 		bmp[i] = new wxBitmap(wxImage(in, wxBITMAP_TYPE_BMP));
 	}

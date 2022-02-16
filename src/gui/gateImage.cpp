@@ -129,29 +129,23 @@ void gateImage::setViewport() {
   glLoadIdentity();
 }
 
-// Print the canvas contents to a bitmap:
+// Draw the gates
 void gateImage::generateImage() {
 #if __APPLE__
-  wxSize sz = GetClientSize();
-  cout << "Generate image for " << gateName << endl;
+
+  //Set up the bitmap
   wxBitmap theBM(GATEIMAGESIZE, GATEIMAGESIZE, 32);
   theBM.UseAlpha();
   wxMemoryDC myDC(theBM); 
+
+  //Account for scaling
   double scale = GetContentScaleFactor();
   int h, w;
   myDC.GetSize(&h, &w);
   myDC.SetDeviceOrigin(h / 4 * scale, w / 4 * scale);
-  // glFlush();
-  // setViewport();
-  // glViewport(0, 0, GATEIMAGESIZE, GATEIMAGESIZE);
-  // glClearColor(1.0, 1.0, 1.0, 0.0);
-  // glColor3b(0, 0, 0);
-  // glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-  // glEnable(GL_BLEND);
-  // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  // glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+  //Draw the bitmap
   m_gate->draw(false, &myDC, scale);
-  // renderMap();
   myDC.SelectObject(wxNullBitmap);
   gImage = theBM.ConvertToImage();
 #else
