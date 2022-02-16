@@ -162,9 +162,9 @@ void guiGate::draw(bool color, wxMemoryDC* dc, double scale) {
 
   #if __APPLE__
   if (dc == nullptr) return;
-  for (unsigned int i = 0; i < vertices.size() - 1; ++i) {
-    GLPoint2f vertex1 = vertices[i];
-    GLPoint2f vertex2 = vertices[i + 1];
+  for (unsigned int i = 1; i < vertices.size(); i += 2) {
+    GLPoint2f vertex1 = vertices[i - 1];
+    GLPoint2f vertex2 = vertices[i];
 
     //I found 1.5x to be a good size, may differ on other devices?
     dc->DrawLine(vertex1.x * scale * 1.5, vertex1.y * scale * 1.5, vertex2.x * scale * 1.5, vertex2.y * scale * 1.5);
