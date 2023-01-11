@@ -35,7 +35,7 @@ void *threadLogic::Entry() {
 	logicIDs = new map < IDType, IDType >;
 	
 	cir = new Circuit();
-	while (!TestDestroy()) {
+	while (!wxThread::TestDestroy()) {
 		checkMessages();
 		wxThread::Sleep(1);
 	}
@@ -44,6 +44,7 @@ void *threadLogic::Entry() {
 }
 
 void threadLogic::checkMessages() {
+
 	wxCriticalSectionLocker locker(wxGetApp().m_critsect);
 	while (wxGetApp().mexMessages.TryLock() == wxMUTEX_BUSY) wxYield();
 	while (wxGetApp().dGUItoLOGIC.size() > 0) {

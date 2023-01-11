@@ -1,6 +1,6 @@
 # Makefile for CedarLogic for Mac
 
-CXX = $(shell wx-config --cxx) -Wno-everything -g -v -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk -I logic/include/ -I include -I include/gui/ -I include/gui/command/ -I include/gui/GLFont
+CXX = $(shell wx-config --cxx) -Wno-everything -g -v -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk -I logic/include/ -I include -I include/gui/ -I include/gui/command/ -I include/gui/GLFont -fsanitize=address
 
 PROGRAM = CedarLogic
 

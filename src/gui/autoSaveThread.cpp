@@ -26,7 +26,7 @@ void *autoSaveThread::Entry()
 
 	MainFrame *frame = wxGetApp().mainframe;
 
-	while (!TestDestroy())
+	while (!wxThread::TestDestroy())
 	{
 		//We only want auto save to happen every WAIT_TIME seconds
 		waitTime = (int)difftime(time(NULL), timeout);
