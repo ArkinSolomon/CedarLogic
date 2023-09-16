@@ -1,3 +1,6 @@
+# READ THIS!!
+
+This code has been on my machine for a while. I got it to compile on MacOS at some point, I have no idea if any of my changes still work however, but feel free to checkout the other branches if you would like.
 
 # About CedarLogic
 CedarLogic is a digital logic simulator often used in university classroom instruction. It includes all the basic gates, buses, JK and D flip flops, muxes, decoders, and a [Z80 micro-processor](https://en.wikipedia.org/wiki/Zilog_Z80). At [Cedarville University](https://www.cedarville.edu/) it has been used by Computer Architecture 1 students to build and simulate a full [mano-machine](https://en.wikipedia.org/wiki/Mano_machine). 
